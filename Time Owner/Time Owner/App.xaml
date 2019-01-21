@@ -1,0 +1,23 @@
+﻿<Application x:Class="Time_Owner.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Time_Owner"
+             Startup="Application_Startup"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/WindowStyle.xaml" />
+                <ResourceDictionary Source="Styles/CheckBoxStyle.xaml" />
+                <ResourceDictionary Source="Styles/ListBoxItemStyle.xaml" />
+                <ResourceDictionary Source="Styles/ButtonRoundCornerStyle.xaml" />
+                <ResourceDictionary Source="Styles/ScrollbarStyle.xaml"/>
+                <ResourceDictionary Source="Styles/ToggleButtonsStyle.xaml"/>
+                <ResourceDictionary Source="Styles/CheckBoxMinimizeStyle.xaml"/>
+                <ResourceDictionary Source="Styles/ContextMenuSimpleStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+        
+    </Application.Resources>
+    
+</Application>

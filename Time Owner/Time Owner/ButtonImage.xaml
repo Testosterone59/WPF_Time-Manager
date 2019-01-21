@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="Time_Owner.ButtonImage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Time_Owner"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="50" Name="btnImage" >
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch"> 
+        <Button x:Name="btn" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="btn_Click" >
+            <Button.Template>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Image x:Name="img1" Source="{Binding ElementName=btnImage, Path=ImageDefault}" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter TargetName="img1"  
+                                        Property="Source"  
+                                        Value="{Binding ElementName=btnImage, Path=ImagePressed}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+    </Grid>
+</UserControl>

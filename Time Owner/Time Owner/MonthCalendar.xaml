@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="Time_Owner.MonthCalendar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Time_Owner"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="200" Background="White">
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="180*"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="gridMonths" HorizontalAlignment="Stretch" Grid.Row="1" Margin="5,0,5,5" VerticalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+        </Grid>
+        <DockPanel Grid.Row="0" HorizontalAlignment="Stretch" LastChildFill="True" VerticalAlignment="Stretch" Background="#FFF0F0F0">
+            <Button DockPanel.Dock="Left" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" BorderThickness="0" Background="#00000000" Click="BtnPrevious">
+                <Path Fill="#FF555555" Data="M -3 6 L 4 12 L 4 0 Z"/>
+            </Button>
+            <Button DockPanel.Dock="Right" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" BorderThickness="0" Background="#00000000" Click="BtnNext">
+                <Path Fill="#FF555555" Data="M 2 12 L 9 6 L 2 0 Z"/>
+            </Button>
+            <Label Name="labelYear" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" FontFamily="/Time_Owner;component/Fonts/#Proxima Nova Cn Rg" Foreground="#FF555555" >
+                <TextBlock Text="{Binding Year}"/>
+            </Label>
+        </DockPanel>
+
+    </Grid>
+</UserControl>

@@ -1,0 +1,27 @@
+﻿<Window x:Class="Time_Owner.WindowInfo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Time_Owner"
+        mc:Ignorable="d"
+        Title="Info" Height="270" Width="310" Background="#353535" WindowStartupLocation="CenterOwner" BorderThickness="2" BorderBrush="White" WindowStyle="None" ResizeMode="NoResize">
+    <Grid>
+        <TextBlock HorizontalAlignment="Left" Padding="5, 4" Margin="20,20,0,0" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Left" Width="266" Height="47" FontFamily="/Time_Owner;component/Fonts/#Proxima Nova Cn Lt">
+            <Run FontSize="16" Foreground="White" Text="The program is absolutely free."/><LineBreak/>
+            <Run FontSize="16" Foreground="White" Text="If you like the program, you can support us."/><LineBreak/> <LineBreak/>
+        </TextBlock>
+        <Grid HorizontalAlignment="Left" Height="62" Margin="20,72,0,0" VerticalAlignment="Top" Width="266">
+            <Label BorderThickness="1" BorderBrush="#FF787777" HorizontalAlignment="Left" VerticalAlignment="Top" Height="62" Width="266"/>
+            <TextBlock HorizontalAlignment="Left" Padding="5, 4" Margin="0,1,0,0" TextWrapping="Wrap" Text="Webmoney" VerticalAlignment="Top" FontSize="16" Foreground="#FFD4DE00" TextAlignment="Left" FontFamily="/Time_Owner;component/Fonts/#Proxima Nova Cn Rg" Width="123" Height="23"/>
+            <TextBox HorizontalAlignment="Left" Padding="5, 2" Margin="0,24,0,0" BorderThickness="0" TextWrapping="Wrap" IsReadOnly="True" Text="R057077325430" VerticalAlignment="Top" FontSize="14" Foreground="White" TextAlignment="Left" FontFamily="/Time_Owner;component/Fonts/#Proxima Nova Cn Lt" Width="123" Height="21" Background="#00687DFF"/>
+            <TextBox HorizontalAlignment="Left" Padding="5, 2" Margin="0,41,0,0" BorderThickness="0" TextWrapping="Wrap" IsReadOnly="True" Text="Z844085423893" VerticalAlignment="Top" FontSize="14" Foreground="White" TextAlignment="Left" FontFamily="/Time_Owner;component/Fonts/#Proxima Nova Cn Lt" Width="123" Height="21" Background="#00687DFF"/>
+            <TextBlock HorizontalAlignment="Left" Padding="5, 4" Margin="128,1,0,0" TextWrapping="Wrap" Text="Paypal" VerticalAlignment="Top" FontSize="16" Foreground="#FF687DFF" TextAlignment="Left" FontFamily="/Time_Owner;component/Fonts/#Proxima Nova Cn Rg" Width="123" Height="23"/>
+            <TextBox HorizontalAlignment="Left" Padding="5, 2" Margin="126,24,0,0" BorderThickness="0" TextWrapping="Wrap" IsReadOnly="True" Text="paypal.me/JustAnimal" VerticalAlignment="Top" FontSize="14" Foreground="White" TextAlignment="Left" FontFamily="/Time_Owner;component/Fonts/#Proxima Nova Cn Lt" Width="138" Height="21" Background="#00687DFF"/>
+        </Grid>
+        <TextBlock HorizontalAlignment="Left" Padding="5, 4" Margin="20,143,0,0" TextWrapping="Wrap" Text="Please will submit with a note 'to Let's work'." VerticalAlignment="Top" FontSize="16" Foreground="White" TextAlignment="Left" FontFamily="/Time_Owner;component/Fonts/#Proxima Nova Cn Lt" Width="266" Height="46"/>
+        <TextBox HorizontalAlignment="Left" Padding="5, 4" Margin="20,194,0,0" BorderThickness="0" TextWrapping="Wrap" IsReadOnly="True" Text="Feedback testosteron5959@gmail.com" VerticalAlignment="Top" FontSize="16" Foreground="White" TextAlignment="Left" FontFamily="/Time_Owner;component/Fonts/#Proxima Nova Cn Lt" Width="266" Height="26" Background="#00687DFF"/>
+        <Button HorizontalAlignment="Left" Content="Ok" Margin="125,231,0,0" VerticalAlignment="Top" Width="60" Background="#FF414141" FontFamily="/Time Owner;component/Fonts/#Proxima Nova Cn Rg" FontSize="14" Foreground="White" Click="BtnOk" Height="19"/>
+
+    </Grid>
+</Window>
