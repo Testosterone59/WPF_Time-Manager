@@ -11,4 +11,5 @@ h1 Screenshots
 
 h1 Other
 -----------------------------------
+If you wanna see or use a compiled build then goto link.
 [Build](https://drive.google.com/file/d/1AQA2uTtHsdXLoOWnV5ZDBfdXKIe5lm5A/view?usp=sharing)
