@@ -77,3 +77,4 @@ c:\My Documents\Visual Studio 2017\Projects\Time Owner\Time Owner\obj\Debug\Goal
 c:\My Documents\Visual Studio 2017\Projects\Time Owner\Time Owner\obj\Debug\GoalWindow.baml
 c:\My Documents\Visual Studio 2017\Projects\Time Owner\Time Owner\obj\Debug\ModeChanger.g.cs
 c:\My Documents\Visual Studio 2017\Projects\Time Owner\Time Owner\obj\Debug\ModeChanger.baml
+c:\My Documents\Visual Studio 2017\Projects\Time Owner\Time Owner\obj\Debug\Styles\ContextMenuSimpleStyle.baml

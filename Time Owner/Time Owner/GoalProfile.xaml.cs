@@ -69,6 +69,13 @@ namespace Time_Owner
             if (window.ShowDialog((t) => Goal = t) == true) { }
         }
 
+        private void BtnContextMenuEdit(object sender, RoutedEventArgs e)
+        {
+            GoalWindow window = new GoalWindow();
+            if (window.ShowDialog((t) => Goal = t, Goal.Name, Goal.dateEnd) == true)
+            { MainWindow.dataChanged = true; }
+        }
+
         private void BtnRemove(object sender, RoutedEventArgs e)
         {
             if (MessageBox.Show($"Are you sure?", "Delete Goal", MessageBoxButton.YesNo) == MessageBoxResult.Yes)

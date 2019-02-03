@@ -25,6 +25,11 @@
                     <Image DockPanel.Dock="Right" Margin="0,6,3,6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Source="Images/btnClock.png" Stretch="Fill" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" />
                     <Label x:Name="labelName" DockPanel.Dock="Right" Content="{Binding Goal.Name, ElementName=goalProfile}" Margin="0,0,5,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Padding="10,0" Foreground="White" FontSize="14" FontFamily="/Time_Owner;component/Fonts/#Proxima Nova Cn Rg"  />
                 </DockPanel>
+                <Grid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Edit" Click="BtnContextMenuEdit"/>
+                    </ContextMenu>
+                </Grid.ContextMenu>
             </Grid>
         </DockPanel>
     </Grid>

@@ -118,6 +118,13 @@ namespace Time_Owner
             eventAddTask.Invoke(this);
         }
 
+        /// <summary>
+        /// Insert a task from a buffer
+        /// </summary>
+        private void OnClickInsertTask(object sender, RoutedEventArgs e)
+        {
+            MainWindow._singleton.InsertTaskToDay(this);
+        }
 
     }
 }

@@ -20,7 +20,8 @@
                 <ContextMenu>
                     <MenuItem Header="Edit" Click="OnClickEdit"/>
                     <MenuItem Header="Delete" Click="OnClickDelete"/>
-                    <MenuItem Header="Copy into ..." Click="OnClickCopy"/>
+                    <MenuItem Header="Copy" Click="OnClickCopy"/>
+                    <MenuItem Header="Copy into ..." Click="OnClickCopyInto"/>
                 </ContextMenu>
             </Grid.ContextMenu>
             <CheckBox x:Name="checkBox" Grid.Column="0" Margin="0,4,0,4" VerticalAlignment="Stretch" RenderTransformOrigin="0.5,0.5" Style="{StaticResource myCheckboxStyle}" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" IsChecked="{Binding IsDone}" />

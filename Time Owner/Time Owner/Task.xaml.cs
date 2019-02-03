@@ -43,7 +43,7 @@ namespace Time_Owner
             InitializeComponent();
 
             checkBox.Click += delegate (object sender, RoutedEventArgs e) { onCheckBoxClick?.Invoke(); };
-            DataContext = DataTask;
+            DataContext = DataTask; 
         }
 
         public void Remove()
@@ -63,7 +63,12 @@ namespace Time_Owner
 
         private void OnClickCopy(object sender, RoutedEventArgs e)
         {
-            MainWindow._singleton.CopyTask(this);
+            MainWindow._singleton.CopySelectedTasksInBuffer();
+        }
+
+        private void OnClickCopyInto(object sender, RoutedEventArgs e)
+        {
+            MainWindow._singleton.CopyTasksInto();
         }
 
         public void OnSelect()
@@ -76,9 +81,12 @@ namespace Time_Owner
             grid.Background = colorUnselect;
         }
 
+        /// <summary>
+        /// Method of selection a task
+        /// </summary>
         private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            onSelect?.Invoke(this);
+            onSelect?.Invoke(this); 
         }
     }
 }

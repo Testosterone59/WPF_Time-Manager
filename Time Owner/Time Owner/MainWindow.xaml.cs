@@ -30,6 +30,11 @@ namespace Time_Owner
         private TimeSpan timerTime, wholeTimer;
 
         /// <summary>
+        /// Used for quick copy and insert tasks
+        /// </summary>
+        private DataTask[] bufferForTasks;
+
+        /// <summary>
         /// To determine the current mode (Work, Rest)
         /// </summary>
         private TimerStage timerStage;
@@ -62,18 +67,44 @@ namespace Time_Owner
         }
 
         /// <summary>
-        /// Array of the current selected days
+        /// Array of a current selected days
         /// </summary>
         private ObservableCollection<Day> days = new ObservableCollection<Day>();
 
-        private Task selectedTask { get { return _selectedTask; } set
-            {
-                if (taskStarted)
-                    StopTimer();
+        /// <summary>
+        /// List of current selected tasks
+        /// </summary>
+        private List<Task> selectedTasks = new List<Task>();
 
-                _selectedTask = value;
-            } }
-        private Task _selectedTask;
+        /// <summary>
+        /// A current work task
+        /// </summary>
+        private Task currentTask
+        {
+            get
+            {
+                return selectedTasks.Count == 1 ?
+                    selectedTasks[0] : null;
+            }
+            set
+            {
+                if (currentTask != null)
+                {
+                    selectedTasks[0].OnUnselect();
+                    selectedTasks[0] = value;
+                    value.OnSelect();
+                }
+                else 
+                {
+                    if (selectedTasks.Count > 0)
+                        UnselectAllTasks();
+
+                    selectedTasks.Add(value);
+                    value.OnSelect();
+                }
+            }
+        }
+
 
         private DispatcherTimer dispatcherTimer;
         private DispatcherTimer timerAutoSave;
@@ -279,7 +310,8 @@ namespace Time_Owner
             /// Update the data of interface
             labelInfoDay.Content = $"The selected date is {dateTime.Day}.{dateTime.Month}.{dateTime.Year}";
             taskDescription.Document.Blocks.Clear();
-            selectedTask = null;
+
+            selectedTasks.Clear();
 
             UpdateTimerInfo();
             UpdateTotalTime();
@@ -336,7 +368,7 @@ namespace Time_Owner
         }
 
         /// <summary>
-        /// A delegate function
+        /// Adding a task to interface application
         /// </summary>
         private void AddTask(DataTask dataTask, Day day)
         {
@@ -353,7 +385,7 @@ namespace Time_Owner
         /// <returns>Created element</returns>
         private Task TaskElement(DataTask dataTask)
         {
-            return new Task(dataTask, () => OnTaskToggleChecked(dataTask), (sender) => OnTaskChanged(sender));
+            return new Task(dataTask, () => OnTaskToggleChecked(dataTask), (sender) => SelectTask(sender));
         }
 
         /// <summary>
@@ -361,10 +393,10 @@ namespace Time_Owner
         /// </summary>
         private void BtnEditTask(object sender, RoutedEventArgs e)
         {
-            if (selectedTask == null)
+            if (currentTask == null)
                 return;
 
-            OnEditTask(selectedTask);
+            OnEditTask(currentTask);
         }
 
         /// <summary>
@@ -377,21 +409,29 @@ namespace Time_Owner
             window.Owner = this;
             if (window.ShowDialog(task.DataTask, null) == true) { }
 
-            if (selectedTask == task)
-                OnSelectTask();
+            if (currentTask == task)
+                UpdateInterfaceSelectedTask();
 
             dataChanged = true;
         }
 
         /// <summary>
-        /// Open the window of task delete (Button)
+        /// Open the window of selected tasks delete (Button)
         /// </summary>
-        private void BtnDeleteTask(object sender, RoutedEventArgs e)
+        private void BtnDeleteTasks(object sender, RoutedEventArgs e)
         {
-            if (selectedTask == null)
+            if (selectedTasks.Count < 1)
                 return;
 
-            OnDeleteTask(selectedTask);
+            /// Write task names
+            string taskNames = string.Empty;
+            foreach (var t in selectedTasks)
+                taskNames += $"[{t.DataTask.TaskName}] ";
+
+            /// Show MessageBox
+            if (MessageBox.Show(this, $"Do you wanna delete the tasks {taskNames}", "Delete Tasks", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                foreach (var t in selectedTasks.ToArray())
+                    DeleteTask(t);
         }
 
         /// <summary>
@@ -399,7 +439,7 @@ namespace Time_Owner
         /// </summary>
         public void OnDeleteTask(Task task)
         {
-            if (task == null || taskStarted && task == selectedTask)
+            if (task == null || taskStarted && task == currentTask)
                 return;
 
             /// Call the confirmation window
@@ -409,68 +449,108 @@ namespace Time_Owner
 
         private void DeleteTask(Task task)
         {
+            selectedTasks.Remove(task);
+
             task.Remove();
-            selectedTask = null;
-            ClearSelectionData();
+
+            if (currentTask == task)
+                ClearSelectionData();
 
             dataChanged = true;
         }
 
         /// <summary>
-        /// Copy a task to custom dates (Open the window)
+        /// Insert a task from a buffer
         /// </summary>
-        public void CopyTask(Task task)
+        /// <param name="day">Target parameter in which adding a copied task</param>
+        public void InsertTaskToDay(Day day)
         {
+            if (bufferForTasks == null || bufferForTasks.Length < 1)
+            {
+                ShowNotifyMessage("First needed to copy a task!", 10);
+                return;
+            }
+
+            /// Copy tasks from our buffer in a selected day
+            foreach (var t in bufferForTasks)
+                AddTask(t.GetCopy(), day);
+        }
+
+        /// <summary>
+        /// Copy tasks in a buffer
+        /// </summary>
+        public void CopySelectedTasksInBuffer()
+        {
+            bufferForTasks = new DataTask[selectedTasks.Count];
+
+            for (int i = 0; i < bufferForTasks.Length; i++)
+                bufferForTasks[i] = selectedTasks[i].DataTask.GetCopy();
+        }
+
+        /// <summary>
+        /// Copy tasks to custom dates (Open the window)
+        /// </summary>
+        public void CopyTasksInto()
+        {
+            if (selectedTasks.Count < 1)
+            {
+                ShowNotifyMessage("First needed to select tasks!", 10);
+                return;
+            }
+
             SelectDate window = new SelectDate();
             window.Owner = this;
-            if (window.ShowDialog((collection) => CopyTask(task, collection)) == true) { }
+            if (window.ShowDialog((collection) => CopyTasksInto(collection)) == true) { }
         }
 
         /// <summary>
         /// Copy a task to custom dates
         /// </summary>
-        public void CopyTask(Task task, SelectedDatesCollection dates)
+        private void CopyTasksInto(SelectedDatesCollection dates)
         {
             if (dates == null || dates.Count == 0)
                 return;
-
-            var target = task.DataTask;
-
-            DataTask dataTaskCopy = new DataTask(
-                target.TaskName, target.Info, 0, 0);
 
             List<DataWeek> weeks = new List<DataWeek>();
 
             // Check if current week was update
             bool update = false;
 
+            // Get copies data tasks which need copy
+            var copiesTasks = GetCopiesOfSelectedTasks();
+
             foreach (var d in dates)
             {
                 // Search a date in a list of loaded weeks 
                 int indexWeek = weeks.FindIndex((w) => w.HasDate(d));
 
-                // If it's found then to add a task into a task list
+                // If it's found then to add tasks into a task list
                 if (indexWeek >= 0)
-                    weeks[indexWeek].days[d.DayOfWeek].tasks.Add(dataTaskCopy);
+                    foreach (var t in copiesTasks)
+                        weeks[indexWeek].days[d.DayOfWeek].tasks.Add(t);
 
-                // Otherwise, load a needed week and add it into a list then add a task copy
+                // Otherwise, load a needed week and add it into a list then add task copies
                 else
                 {
                     if (!weeks.Contains(selectedDataWeek) && selectedDataWeek.HasDate(d))
                     {
                         update = true;
                         dataChanged = false;
-
+                        
                         if (taskStarted)
                             StopTimer();
 
-                        selectedDataWeek.days[d.DayOfWeek].tasks.Add(dataTaskCopy);
+                        foreach (var t in copiesTasks)
+                            selectedDataWeek.days[d.DayOfWeek].tasks.Add(t);
+
                         weeks.Add(selectedDataWeek);
                     }
                     else
                     {
                         DataWeek newWeek = FileManager.LoadWeek(d, GlobalSettings.pathData);
-                        newWeek.days[d.DayOfWeek].tasks.Add(dataTaskCopy);
+
+                        foreach (var t in copiesTasks)
+                            newWeek.days[d.DayOfWeek].tasks.Add(t);
 
                         weeks.Add(newWeek);
                     }
@@ -483,6 +563,11 @@ namespace Time_Owner
 
             if (update)
                 LoadCalendarDate(calendar);
+        }
+
+        private IEnumerable<DataTask> GetCopiesOfSelectedTasks()
+        {
+            return selectedTasks.Select(t => t.DataTask.GetCopy());
         }
 
         /// <summary>
@@ -498,25 +583,53 @@ namespace Time_Owner
         /// <summary>
         /// Invoked if was selected the new current task
         /// </summary>
-        private void OnTaskChanged(Task sender)
+        private void SelectTask(Task sender)   
         {
             /// If current task was run on or current task equal a new task then return
-            if (taskStarted || selectedTask == sender)
+            if (taskStarted)
                 return;
 
-            /// Unselect an old task
-            if (selectedTask != null)
-                selectedTask.OnUnselect();
+            /// Check the pressed keyboard "SHIFT"
+            if ((Keyboard.Modifiers & ModifierKeys.Shift) == ModifierKeys.Shift)
+            {
+                if (selectedTasks.Contains(sender))
+                {
+                    selectedTasks.Remove(sender);
+                    sender.OnUnselect();
+                }
+                else
+                {
+                    selectedTasks.Add(sender);
+                    sender.OnSelect();
+                }
+            }
+            else
+            {
+                if (currentTask == sender)
+                    return;
 
-            selectedTask = sender;
-            selectedTask.OnSelect();
-            OnSelectTask();
+                currentTask = sender;
+            }
+
+            UpdateInterfaceSelectedTask();
         }
 
+        private void UnselectAllTasks()
+        {
+            foreach (var t in selectedTasks)
+                t.OnUnselect();
+
+            selectedTasks.Clear();
+            UpdateInterfaceSelectedTask();
+        }
+
+        /// <summary>
+        /// Invoked when user mark a task as complete or incomplete
+        /// </summary>
         private void OnTaskToggleChecked(DataTask task)
         {
             dataChanged = true;
-            if (task != selectedTask?.DataTask)
+            if (task != currentTask?.DataTask)
                 return;
 
             if (taskStarted)
@@ -527,23 +640,34 @@ namespace Time_Owner
 
         private void OnClickCalendar(object sender, RoutedEventArgs e)
         {
+            // If a task is running in the moment then don't let to open
             if (taskStarted)
                 return;
+
             if (calendar.Visibility == Visibility.Hidden)
                { calendar.Visibility = Visibility.Visible; dockModePanel.Visibility = Visibility.Visible; }
             else
                { calendar.Visibility = Visibility.Hidden; dockModePanel.Visibility = Visibility.Hidden; }
         }
 
-        private void OnSelectTask()
+        /// <summary>
+        /// Called when selecting other task
+        /// </summary>
+        private void UpdateInterfaceSelectedTask()
         {
+            // Clear and insert new description to spesial block of interface
             taskDescription.Document.Blocks.Clear();
-            taskDescription.AppendText(selectedTask.DataTask.Info);
+            if (currentTask != null)
+                taskDescription.AppendText(currentTask.DataTask.Info);
 
+            // Update a data of task on interface
             UpdateTimerInfo();
             UpdateButtonsTimer();
         }
 
+        /// <summary>
+        /// Clear the description block of tasks in interface
+        /// </summary>
         private void ClearSelectionData()
         {
             taskDescription.Document.Blocks.Clear();
@@ -558,7 +682,7 @@ namespace Time_Owner
             {
                 case TimerStage.Work:
                     receivedTomato++;
-                    selectedTask.DataTask.Tomatoes++; 
+                    currentTask.DataTask.Tomatoes++; 
                     // Adding exp to profile
                     Profile.data.AddExperience((int)wholeTimer.TotalMinutes);
 
@@ -574,8 +698,11 @@ namespace Time_Owner
                         isLongBreak = true; }
 
                     timerStage = TimerStage.Break;
-                    selectedTask.DataTask.TotalTime = 
-                        selectedTask.DataTask.TotalTime.Add(new TimeSpan(0, GlobalSettings.dataSettings.TimeOfWork, 0));
+
+                    currentTask.DataTask.TotalTime = 
+                        currentTask.DataTask.TotalTime.Add
+                        (new TimeSpan(0, GlobalSettings.dataSettings.TimeOfWork, 0));
+
                     UpdateTotalTime();
                     TaskbarItemInfo.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Paused;
 
@@ -663,11 +790,11 @@ namespace Time_Owner
                         if (GlobalSettings.dataSettings.TimeOfGettingTomato > 0 &&
                             timerTime.TotalMinutes == GlobalSettings.dataSettings.TimeOfGettingTomato)
                         {
-                            selectedTask.DataTask.Tomatoes++;
+                            currentTask.DataTask.Tomatoes++;
 
                             // Adding a total time to a selected task
-                            selectedTask.DataTask.TotalTime =
-                                selectedTask.DataTask.TotalTime.Add(timerTime);
+                            currentTask.DataTask.TotalTime =
+                                currentTask.DataTask.TotalTime.Add(timerTime);
 
                             // Adding exp to profile
                             Profile.data.AddExperience((int)GlobalSettings.dataSettings.TimeOfGettingTomato);
@@ -684,7 +811,7 @@ namespace Time_Owner
                         textTimerTime.Text = totalTime.ToString();
 
                         if (GlobalSettings.dataSettings.MaximumTaskTime > 0 &&
-                            totalTime.TotalMinutes + selectedTask.DataTask.TotalTime.TotalMinutes
+                            totalTime.TotalMinutes + currentTask.DataTask.TotalTime.TotalMinutes
                             >= GlobalSettings.dataSettings.MaximumTaskTime)
                         {
                             StopTimer();
@@ -732,8 +859,16 @@ namespace Time_Owner
                     break;
             }
 
-            if (selectedTask != null)
-                textTimerTotalTime.Text = $"Time in total {selectedTask.DataTask.TotalTime.ToString()}";
+            /// Calculate all total time of selected tasks and show it in interface.
+            if (selectedTasks.Count > 0)
+            {
+                TimeSpan total = new TimeSpan();
+
+                foreach (var t in selectedTasks)
+                    total = total.Add(t.DataTask.TotalTime);
+
+                textTimerTotalTime.Text = $"Time in total {total.ToString()}";
+            }
         }
 
         private void UpdateTotalTime()
@@ -747,11 +882,27 @@ namespace Time_Owner
             textTimerTotalTimeMode.Text = $"Total working time {timeSpan.ToString()}";
         }
 
+        /// <summary>
+        /// This method showing and hiding buttons "Play" and "Stop"
+        /// </summary>
         private void UpdateButtonsTimer()
         {
-            if (selectedTask == null || selectedTask.DataTask.IsDone) { btnPlay.Visibility = Visibility.Hidden; btnStop.Visibility = Visibility.Hidden; return; }
-            if (taskStarted) { btnPlay.Visibility = Visibility.Hidden; btnStop.Visibility = Visibility.Visible; }
-            else { btnPlay.Visibility = Visibility.Visible; btnStop.Visibility = Visibility.Hidden; }
+            /// If don't a selected task or their're several or a selected task's done then .. 
+            if (currentTask == null || currentTask.DataTask.IsDone)
+            {
+                btnPlay.Visibility = Visibility.Hidden;
+                btnStop.Visibility = Visibility.Hidden;
+            }
+            else if (taskStarted)
+            {
+                btnPlay.Visibility = Visibility.Hidden;
+                btnStop.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                btnPlay.Visibility = Visibility.Visible;
+                btnStop.Visibility = Visibility.Hidden;
+            }
         }
 
         /// <summary>
@@ -779,7 +930,7 @@ namespace Time_Owner
                 case ModesOfWork.Timer:
 
                     if (GlobalSettings.dataSettings.MaximumTaskTime > 0 &&
-                        selectedTask.DataTask.TotalTime.TotalMinutes >= GlobalSettings.dataSettings.MaximumTaskTime)
+                        currentTask.DataTask.TotalTime.TotalMinutes >= GlobalSettings.dataSettings.MaximumTaskTime)
                     {
                         ShowNotifyMessage("Max time of whole task is up", 10);
                         return;
@@ -815,7 +966,7 @@ namespace Time_Owner
                     {
                         // Get the difference between the specified time and the past time
                         TimeSpan time = new TimeSpan(0, GlobalSettings.dataSettings.TimeOfWork, 0).Subtract(timerTime);
-                        selectedTask.DataTask.TotalTime = selectedTask.DataTask.TotalTime.Add(time);
+                        currentTask.DataTask.TotalTime = currentTask.DataTask.TotalTime.Add(time);
                         UpdateTotalTime();
                         // Adding exp to profile
                         Profile.data.AddExperience((int)time.TotalMinutes);
@@ -827,7 +978,7 @@ namespace Time_Owner
                     progressBar = null;
                     break;
                 case ModesOfWork.Timer:
-                    selectedTask.DataTask.TotalTime = selectedTask.DataTask.TotalTime.Add(timerTime);
+                    currentTask.DataTask.TotalTime = currentTask.DataTask.TotalTime.Add(timerTime);
                     UpdateTotalTime();
 
                     // Adding exp to profile

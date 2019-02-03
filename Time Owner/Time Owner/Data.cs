@@ -204,6 +204,15 @@ namespace Time_Owner
         public DataTask(string name, string info, int totalSeconds, int tomatoes, bool done = false)
         { this.TaskName = name; this.Info = info; this.TotalTime = new TimeSpan(0, 0, 0, totalSeconds);
             this.Tomatoes = tomatoes; this.IsDone = done; }
+
+        /// <summary>
+        /// Method for copying tasks
+        /// </summary>
+        public DataTask GetCopy()
+        {
+            return new DataTask(
+                TaskName, Info, 0, 0);
+        }
     }
 
     public struct Date

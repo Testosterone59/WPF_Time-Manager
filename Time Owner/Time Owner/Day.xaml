@@ -17,6 +17,11 @@
         <DockPanel HorizontalAlignment="Stretch" Background="#353535" LastChildFill="True" VerticalAlignment="Stretch" >
             <local:ButtonImage DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,6,11,6" VerticalAlignment="Stretch" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}" ImageDefault="Images\btnAddTaskNormal.png" ImagePressed="Images\btnAddTaskPressed.png" Click="BtnAddTask"/>
             <Label x:Name="nameDay" DockPanel.Dock="Right" Content="Monday" Padding="10,0" VerticalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" FontFamily="/Time_Owner;component/Fonts/#Proxima Nova Cn Rg" FontSize="16" FontStretch="Condensed" FontWeight="SemiBold" Foreground="White" Width="360" />
+            <DockPanel.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Insert a task" Click="OnClickInsertTask"/>
+                </ContextMenu>
+            </DockPanel.ContextMenu>
         </DockPanel>
     </Grid>
 </UserControl>

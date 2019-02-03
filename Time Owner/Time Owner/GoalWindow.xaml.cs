@@ -28,19 +28,26 @@ namespace Time_Owner
             get { return Goal.Name != string.Empty && Goal.dateEnd.HasValue; }
         }
 
-        public Goal Goal { get; set; }
+        public Goal Goal
+        {
+            get { return (Goal)GetValue(TargetProperty); }
+            set
+            {
+                SetValue(TargetProperty, value);
+                BindingContext();
+            }
+        }
 
+        /// <summary>
+        /// It is executed when successful
+        /// </summary>
         private Action<Goal> actionOfSuccess;
 
         public GoalWindow()
         {
             InitializeComponent();
 
-            Goal = new Goal();
-
             datePicker.DisplayDateStart = DateTime.Now.AddDays(1);
-
-            BindingContext();
         }
 
         private void BindingContext()
@@ -49,9 +56,11 @@ namespace Time_Owner
             datePicker.DataContext = Goal;
         }
 
-        public bool? ShowDialog(Action<Goal> actionOfSuccess)
+        public bool? ShowDialog(Action<Goal> actionOfSuccess, string defaultName = "New Goal", DateTime? defaultDate = null)
         {
             this.actionOfSuccess = actionOfSuccess;
+            this.Goal = new Goal() { Name = defaultName, dateEnd = defaultDate };
+
             return base.ShowDialog();
         }
 
