@@ -6,8 +6,8 @@ Time Manager for organize your working time and tracking your progress in work. 
 
 h1 Screenshots
 -----------------------------------
-![Main](https://cdn1.savepice.ru/uploads/2019/1/21/2bd902ef1e025af75b2062cd9625a03b-full.png)
-![Statistics](https://cdn1.savepice.ru/uploads/2019/1/21/39d8abde1ab2acc2c4e20ea78afd871f-full.png)
+![Main](http://www.picshare.ru/uploads/190225/v6F167Aj8P.jpg)
+![Statistics](http://www.picshare.ru/uploads/190225/KWGwcDTYvV.jpg)
 
 h1 Other
 -----------------------------------
